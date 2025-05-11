@@ -51,7 +51,7 @@ paths:
     put:
       tags:
         - Item
-      description: Create a new item and return the ID
+      description: Modify an existing item
       requestBody:
         description: The details of the Item to be modified
         content:
