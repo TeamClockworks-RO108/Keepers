@@ -1,0 +1,252 @@
+openapi: 3.1.0
+info:
+  title: Inventory API
+  description: Inventory API
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080'
+  - url: 'https://inventory-api-dev.teamclockworks.ro'
+  - url: 'https://inventory-api.teamclockworks.ro'
+
+tags:
+  - name: Item
+    description: Everything about items and quantities
+  - name: Bulk
+    description: Bulk operations
+
+
+
+paths:
+
+  /item:
+    post:
+      tags:
+        - Item
+      description: Create a new item and return the ID
+      requestBody:
+        description: The details of the Item to be created
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemNoId"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        400:
+          description: The body is not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportedError"
+
+    put:
+      tags:
+        - Item
+      description: Create a new item and return the ID
+      requestBody:
+        description: The details of the Item to be modified
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Item"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        400:
+          description: The body is not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportedError"
+        404:
+          description: Item ID does not exist
+
+  /item/{itemId}:
+    get:
+      tags:
+        - Item
+      description: Returns information about an item
+      parameters:
+        - name: itemId
+          in: path
+          description: ID of the item to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        400:
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportedError'
+        404:
+          description: Item ID does not exist
+
+
+    delete:
+      tags:
+        - Item
+      description: Delete an Item
+      parameters:
+        - name: itemId
+          in: path
+          description: ID of the item to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Item deleted
+        404:
+          description: Item ID not found
+        400:
+          description: Invalid ID supplied
+
+
+
+  /item/id:
+    get:
+      tags:
+        - Item
+        - Bulk
+      description: Returns e list of Item ID's of all the items currently in the database
+      responses:
+        200:
+          description: The ID list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ItemIdList"
+
+  /items/bulk:
+    get:
+      tags:
+        - Item
+        - Bulk
+      description: Returns a list of item details from a given list of item ID's. If some of the ID's are not found, it will not return the Item as part of the output array. In other words, the output array can be smaller than the input of some ID's are not found.
+      requestBody:
+        description: List of ID's to query
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemIdList'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ItemList"
+        400:
+          description: The body (ID list) supplied is not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportedError"
+
+
+
+
+components:
+  schemas:
+
+    ReportedError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: 'An error has occured. Please check logs and report to administrator.'
+
+    Item:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              example: 10
+        - $ref: "#/components/schemas/ItemFields"
+        - type: object
+          properties:
+            quantities:
+              type: array
+              items:
+                $ref: "#/components/schemas/ItemQuantity"
+
+
+    ItemNoId:
+      allOf:
+        - $ref: "#/components/schemas/ItemFields"
+        - type: object
+          properties:
+            quantities:
+              type: array
+              items:
+                $ref: "#/components/schemas/ItemQuantityFields"
+
+    ItemFields:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 250
+          example: "Servo Axon Max+"
+
+    ItemQuantity:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              example: 31
+        - $ref: "#/components/schemas/ItemQuantityFields"
+
+    ItemQuantityFields:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 6
+        allocated:
+          type: boolean
+          example: false
+        comments:
+          type: string
+          maxLength: 2500
+          example: "Necesita reparatie"
+
+    ItemIdList:
+      type: array
+      items:
+        type: integer
+        format: int64
+        example: 10
+
+    ItemList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Item'
+
+
+  
