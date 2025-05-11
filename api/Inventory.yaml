@@ -5,8 +5,13 @@ info:
   version: 1.0.0
 servers:
   - url: 'http://localhost:8080'
+    description: Local development
+  - url: 'http://localhost:4010'
+    description: Prism mockup
   - url: 'https://inventory-api-dev.teamclockworks.ro'
+    description: Pre-production (QA) environment
   - url: 'https://inventory-api.teamclockworks.ro'
+    description: Production deployment
 
 tags:
   - name: Item
