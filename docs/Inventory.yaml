@@ -10,6 +10,8 @@ servers:
     description: Prism mockup
   - url: 'https://inventory-api-dev.teamclockworks.ro'
     description: Pre-production (QA) environment
+  - url: 'https://inventory-api-dev.lucaciresearch.net'
+    description: Pre-production backup (QA-dev) environment
   - url: 'https://inventory-api.teamclockworks.ro'
     description: Production deployment
 
