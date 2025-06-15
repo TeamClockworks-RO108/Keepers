@@ -126,7 +126,7 @@ paths:
 
 
 
-  /item/id:
+  /items/id:
     get:
       tags:
         - Item
