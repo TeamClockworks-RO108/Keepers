@@ -64,7 +64,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Item"
+                $ref: "#/components/schemas/ItemModify"
         400:
           description: The body is not valid
           content:
@@ -178,6 +178,24 @@ components:
         error:
           type: string
           example: 'An error has occured. Please check logs and report to administrator.'
+
+    ItemModify:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              example: 10
+        - $ref: "#/components/schemas/ItemFields"
+        - type: object
+          properties:
+            quantities:
+              type: array
+              items:
+                oneOf:
+                  - $ref: "#/components/schemas/ItemQuantity"
+                  - $ref: "#/components/schemas/ItemQuantityFields"
 
     Item:
       allOf:
